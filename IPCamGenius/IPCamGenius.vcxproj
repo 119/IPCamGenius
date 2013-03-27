@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0C841C01-11E1-4E86-8431-1FEB22A244C8}</ProjectGuid>
+    <RootNamespace>IPCamGenius</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>G:\毕业设计\IPCamGenius\IPCamGenius;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;IPHlpApi.Lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\img_link.bmp" />
+    <None Include="res\IPCamGenius.ico" />
+    <None Include="res\IPCamGenius.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Authorization.h" />
+    <ClInclude Include="base64.h" />
+    <ClInclude Include="CameraAdapter.h" />
+    <ClInclude Include="CameraAdapterF.h" />
+    <ClInclude Include="CameraAdapterH.h" />
+    <ClInclude Include="Gateway.h" />
+    <ClInclude Include="IPCamGenius.h" />
+    <ClInclude Include="IPCamGeniusDlg.h" />
+    <ClInclude Include="Mutex.h" />
+    <ClInclude Include="network.h" />
+    <ClInclude Include="NetworkController.h" />
+    <ClInclude Include="ProgressDialog.h" />
+    <ClInclude Include="RadioUPnPMapDialog.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="supplementary.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="thread_functions.h" />
+    <ClInclude Include="UPnPMap.h" />
+    <ClInclude Include="upnp\bsdqueue.h" />
+    <ClInclude Include="upnp\codelength.h" />
+    <ClInclude Include="upnp\connecthostport.h" />
+    <ClInclude Include="upnp\declspec.h" />
+    <ClInclude Include="upnp\igd_desc_parse.h" />
+    <ClInclude Include="upnp\minisoap.h" />
+    <ClInclude Include="upnp\minissdpc.h" />
+    <ClInclude Include="upnp\miniupnpc.h" />
+    <ClInclude Include="upnp\miniupnpcstrings.h" />
+    <ClInclude Include="upnp\miniupnpctypes.h" />
+    <ClInclude Include="upnp\miniwget.h" />
+    <ClInclude Include="upnp\minixml.h" />
+    <ClInclude Include="upnp\portlistingparse.h" />
+    <ClInclude Include="upnp\receivedata.h" />
+    <ClInclude Include="upnp\upnpcommands.h" />
+    <ClInclude Include="upnp\upnperrors.h" />
+    <ClInclude Include="upnp\upnpreplyparse.h" />
+    <ClInclude Include="WIFIAuthDlg.h" />
+    <ClInclude Include="WIFIListDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Authorization.cpp" />
+    <ClCompile Include="base64.cpp" />
+    <ClCompile Include="CameraAdapterF.cpp" />
+    <ClCompile Include="CameraAdapterH.cpp" />
+    <ClCompile Include="Gateway.cpp" />
+    <ClCompile Include="IPCamGenius.cpp" />
+    <ClCompile Include="IPCamGeniusDlg.cpp" />
+    <ClCompile Include="Mutex.cpp" />
+    <ClCompile Include="network.cpp" />
+    <ClCompile Include="NetworkController.cpp" />
+    <ClCompile Include="ProgressDialog.cpp" />
+    <ClCompile Include="RadioUPnPMapDialog.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="supplementary.cpp" />
+    <ClCompile Include="thread_functions.cpp" />
+    <ClCompile Include="UPnPMap.cpp" />
+    <ClCompile Include="upnp\connecthostport.cpp" />
+    <ClCompile Include="upnp\igd_desc_parse.cpp" />
+    <ClCompile Include="upnp\minisoap.cpp" />
+    <ClCompile Include="upnp\miniupnpc.cpp" />
+    <ClCompile Include="upnp\miniwget.cpp" />
+    <ClCompile Include="upnp\minixml.cpp" />
+    <ClCompile Include="upnp\portlistingparse.cpp" />
+    <ClCompile Include="upnp\receivedata.cpp" />
+    <ClCompile Include="upnp\upnpc.cpp" />
+    <ClCompile Include="upnp\upnpcommands.cpp" />
+    <ClCompile Include="upnp\upnperrors.cpp" />
+    <ClCompile Include="upnp\upnpreplyparse.cpp" />
+    <ClCompile Include="WIFIAuthDlg.cpp" />
+    <ClCompile Include="WIFIListDlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IPCamGenius.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="IPCamGenius.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
