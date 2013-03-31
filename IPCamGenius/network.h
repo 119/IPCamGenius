@@ -16,6 +16,7 @@ struct IPCameraInfo
 	char cameraName[64];
 	char externalIPAddress[64];
 	int adapter_idx;
+	char mac[16];
 };
 
 struct WIFI_Entry
@@ -35,5 +36,6 @@ bool recive_packet(unsigned short port_bind, char *packet, int &packet_size, CSt
 unsigned long ip_s2ul(const char *ip);
 bool getGatewayInfo(CString &gateway, CString &mask);
 CString getIPByOffset(const unsigned char *data, int offset);
+void fillOffsetByIP(unsigned char *data, int offset, const char *ip);
 
 #endif

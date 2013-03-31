@@ -69,6 +69,7 @@ IPCameraInfo CameraAdapterF::parsePacket() const
 	strcpy(caminfo.ip, last_sender_ip);
 	memcpy(&(caminfo.port_http), (char *)last_recv_packet + offset_port_http, 2);
 	strcpy(caminfo.cameraName, (char *)last_recv_packet + offset_name);
+	strcpy(caminfo.mac, (char *)last_recv_packet + offset_mac);
 
 	return caminfo;
 }
@@ -104,25 +105,23 @@ bool CameraAdapterF::get_params_ssid(const IPCameraInfo &info, CString &ssid)
 
 bool CameraAdapterF::set_network(const IPCameraInfo &info)
 {
-	CString buf;
-	CString request_head = "GET /set_network.cgi?ip=" + CString(info.ip) + 
-		"&mask=" + CString(info.mask) + "&gateway=" + CString(info.gateway) + 
-		"&port=" + ulong2CString(info.port_http) + "&rtspport=" + ulong2CString(info.port_rtsp);
-	CString loginuser = "admin", loginpwd = "";
-	CString request = request_head + "&loginuse=" + loginuser + "&loginpas=" + loginpwd + " HTTP/1.1\r\n\r\n";
+	CString user, pwd;
+	static unsigned char _packet_set[0x53] = {
+		0x4d, 0x4f, 0x5f, 0x49, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3d
+	};
+	memset(_packet_set + 0x10, 0, 0x43);
+	strcpy((char *)_packet_set + 0x1B, info.mac);
+	user = CStringTruncate("admin", 13);
+	//if (!getAuth(user, pwd)) return false;
+	memcpy((char *)_packet_set + 0x28, CStringTruncate(user, 13), 13);
+	memcpy((char *)_packet_set + 0x35, CStringTruncate(pwd, 13), 13);
+	fillOffsetByIP(_packet_set, 0x42, info.ip);
+	fillOffsetByIP(_packet_set, 0x46, info.mask);
+	fillOffsetByIP(_packet_set, 0x4A, info.gateway);
+	_packet_set[0x51] = (unsigned char)((info.port_http >> 8) & 255);
+	_packet_set[0x52] = (unsigned char)(info.port_http & 255);
 
-	httpRequest(info.ip, info.port_http, request, &buf);
-	while (strstr(buf.GetBuffer(0), "user or passwd is error") != NULL) {
-		if (!getAuth(loginuser, loginpwd)) return false;
-		CStringSpecialChars(loginuser);
-		CStringSpecialChars(loginpwd);
-		request = request_head + "&loginuse=" + loginuser + "&loginpas=" + loginpwd + " HTTP/1.1\r\n\r\n";
-		httpRequest(info.ip, info.port_http, request, &buf);
-	}
-	if (!strstr(buf.GetBuffer(0), "ok")) return false;
-	ipcam_reboot(info, loginuser, loginpwd);
-
-	return true;
+	return broadcast_packet(port_destination, (char *)_packet_set, sizeof(_packet_set), port_source);
 }
 
 bool CameraAdapterF::ipcam_reboot(const IPCameraInfo &info, CString user, CString pwd)

@@ -182,3 +182,18 @@ bool parseWIFIEntries(CString xbuf, std::vector<WIFI_Entry> &vec)
 	}
 	return true;
 }
+
+CString CStringTruncate(CString ori, int len)
+{
+	int i;
+	char buf[1024];
+	const char *p = ori;
+	memcpy(buf, 0, len + 1);
+
+	for (i = 0; i < len && i < ori.GetLength(); i++)
+		*(buf + i) = *(p + i);
+	for (; i < len; i++)
+		*(buf + i) = 0;
+	*(buf + len) = 0;
+	return buf;
+}

@@ -3,6 +3,7 @@
 #include "IPCamGeniusDlg.h"
 #include "afxdialogex.h"
 #include "RadioUPnPMapDialog.h"
+#include "NetworkSettingDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,6 +33,7 @@ BEGIN_MESSAGE_MAP(CIPCamGeniusDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ONEKEY_CONFIG, &CIPCamGeniusDlg::OnBnClickedButtonOnekeyConfig)
 	ON_BN_CLICKED(IDC_BUTTON_REFRESH_NETWORK, &CIPCamGeniusDlg::OnBnClickedButtonRefreshNetwork)
 	ON_BN_CLICKED(IDC_BUTTON_WIFI_CONFIG, &CIPCamGeniusDlg::OnBnClickedButtonWifiConfig)
+	ON_BN_CLICKED(IDC_BUTTON_SET_NETWORK, &CIPCamGeniusDlg::OnBnClickedButtonSetNetwork)
 END_MESSAGE_MAP()
 
 BOOL CIPCamGeniusDlg::OnInitDialog()
@@ -344,3 +346,30 @@ void CIPCamGeniusDlg::OnBnClickedButtonWifiConfig()
 	m_dialog_wifi_list.f_wifi_list_refresh();
 }
 
+
+void CIPCamGeniusDlg::OnBnClickedButtonSetNetwork()
+{
+	POSITION pos = m_list_cameras.GetFirstSelectedItemPosition();
+	int idx = m_list_cameras.GetNextSelectedItem(pos);
+	if (idx < 0) {
+		msgbox("ÇëÏÈÑ¡ÔñÉãÏñ»ú");
+		return;
+	}
+
+	IPCameraInfo info = network_controller.vec_info[idx];
+
+	CNetworkSettingDlg dlg;
+	dlg.setIP(info.ip);
+	dlg.setPortHTTP(info.port_http);
+	dlg.setMask(info.mask);
+	dlg.setGateway(info.gateway);
+	if (dlg.DoModal() == IDOK) {
+		strcpy(info.ip, dlg.getIP());
+		strcpy(info.gateway, dlg.getGateway());
+		strcpy(info.mask, dlg.getMask());
+		info.port_http = dlg.getPortHTTP();
+		info.port_rtsp = dlg.getPortRTSP();
+		network_controller.camera_adapters[info.adapter_idx]->set_network(info);
+		reset_network();
+	}
+}

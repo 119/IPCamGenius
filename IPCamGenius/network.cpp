@@ -158,3 +158,14 @@ CString getIPByOffset(const unsigned char *data, int offset)
 	sprintf(ip, "%u.%u.%u.%u", data[offset], data[offset+1], data[offset+2], data[offset+3]);
 	return ip;
 }
+
+void fillOffsetByIP(unsigned char *data, int offset, const char *ip)
+{
+	unsigned int a, b, c, d;
+
+	sscanf(ip, "%u.%u.%u.%u", &a, &b, &c, &d);
+	data[offset] = (unsigned char)a;
+	data[offset+1] = (unsigned char)b;
+	data[offset+2] = (unsigned char)c;
+	data[offset+3] = (unsigned char)d;
+}

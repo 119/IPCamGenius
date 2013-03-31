@@ -44,4 +44,5 @@ public:
 	afx_msg void OnBnClickedButtonOnekeyConfig();
 	afx_msg void OnBnClickedButtonRefreshNetwork();
 	afx_msg void OnBnClickedButtonWifiConfig();
+	afx_msg void OnBnClickedButtonSetNetwork();
 };

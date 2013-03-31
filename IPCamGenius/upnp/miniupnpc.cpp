@@ -489,14 +489,7 @@ upnpDiscover(int delay, const char * multicastif,
 	{
 		if(ipv6) {
 #if !defined(_WIN32)
-			/* according to MSDN, if_nametoindex() is supported since
-			 * MS Windows Vista and MS Windows Server 2008.
-			 * http://msdn.microsoft.com/en-us/library/bb408409%28v=vs.85%29.aspx */
-			unsigned int ifindex = if_nametoindex(multicastif); /* eth0, etc. */
-			if(setsockopt(sudp, IPPROTO_IPV6, IPV6_MULTICAST_IF, &ifindex, sizeof(&ifindex)) < 0)
-			{
-				PRINT_SOCKET_ERROR("setsockopt");
-			}
+
 #else
 #ifdef DEBUG
 			printf("Setting of multicast interface not supported in IPv6 under Windows.\n");
@@ -514,14 +507,7 @@ upnpDiscover(int delay, const char * multicastif,
 				}
 			} else {
 #ifdef HAS_IP_MREQN
-				/* was not an ip address, try with an interface name */
-				struct ip_mreqn reqn;	/* only defined with -D_BSD_SOURCE or -D_GNU_SOURCE */
-				memset(&reqn, 0, sizeof(struct ip_mreqn));
-				reqn.imr_ifindex = if_nametoindex(multicastif);
-				if(setsockopt(sudp, IPPROTO_IP, IP_MULTICAST_IF, (const char *)&reqn, sizeof(reqn)) < 0)
-				{
-					PRINT_SOCKET_ERROR("setsockopt");
-				}
+
 #else
 #ifdef DEBUG
 				printf("Setting of multicast interface not supported with interface name.\n");
@@ -741,17 +727,15 @@ GetUPNPUrls(struct UPNPUrls * urls, struct IGDdatas * data,
 {
 	char * p;
 	int n1, n2, n3, n4;
-	char ifname[IF_NAMESIZE];
+	char scope_str[8];
 
 	n1 = strlen(data->urlbase);
 	if(n1==0)
 		n1 = strlen(descURL);
 	if(scope_id != 0) {
-		if(if_indextoname(scope_id, ifname)) {
-			n1 += 3 + strlen(ifname);	/* 3 == strlen(%25) */
-		}
+		snprintf(scope_str, sizeof(scope_str), "%u", scope_id);
 	}
-	n1 += 2;	/* 1 byte more for Null terminator, 1 byte for '/' if needed */
+	n1 += 2;
 	n2 = n1; n3 = n1; n4 = n1;
 	n1 += strlen(data->first.scpdurl);
 	n2 += strlen(data->first.controlurl);
@@ -765,7 +749,7 @@ GetUPNPUrls(struct UPNPUrls * urls, struct IGDdatas * data,
 	urls->controlURL_6FC = (char *)malloc(n4);
 
 	/* strdup descURL */
-	urls->rootdescURL = _strdup(descURL);
+	urls->rootdescURL = strdup(descURL);
 
 	/* get description of WANIPConnection */
 	if(data->urlbase[0] != '\0')
@@ -780,35 +764,21 @@ GetUPNPUrls(struct UPNPUrls * urls, struct IGDdatas * data,
 			p = strchr(urls->ipcondescURL, ']');
 			if(p) {
 				/* insert %25<scope> into URL */
-				memmove(p + 3 + strlen(ifname), p, strlen(p) + 1);
+				memmove(p + 3 + strlen(scope_str), p, strlen(p) + 1);
 				memcpy(p, "%25", 3);
-				memcpy(p + 3, ifname, strlen(ifname));
+				memcpy(p + 3, scope_str, strlen(scope_str));
 			}
 		}
 	}
 	strncpy(urls->controlURL, urls->ipcondescURL, n2);
 	strncpy(urls->controlURL_CIF, urls->ipcondescURL, n3);
 	strncpy(urls->controlURL_6FC, urls->ipcondescURL, n4);
-
 	url_cpy_or_cat(urls->ipcondescURL, data->first.scpdurl, n1);
-
 	url_cpy_or_cat(urls->controlURL, data->first.controlurl, n2);
-
 	url_cpy_or_cat(urls->controlURL_CIF, data->CIF.controlurl, n3);
-
 	url_cpy_or_cat(urls->controlURL_6FC, data->IPv6FC.controlurl, n4);
-
-#ifdef DEBUG
-	printf("urls->ipcondescURL='%s' %u n1=%d\n", urls->ipcondescURL,
-	       (unsigned)strlen(urls->ipcondescURL), n1);
-	printf("urls->controlURL='%s' %u n2=%d\n", urls->controlURL,
-	       (unsigned)strlen(urls->controlURL), n2);
-	printf("urls->controlURL_CIF='%s' %u n3=%d\n", urls->controlURL_CIF,
-	       (unsigned)strlen(urls->controlURL_CIF), n3);
-	printf("urls->controlURL_6FC='%s' %u n4=%d\n", urls->controlURL_6FC,
-	       (unsigned)strlen(urls->controlURL_6FC), n4);
-#endif
 }
+
 
 LIBSPEC void
 FreeUPNPUrls(struct UPNPUrls * urls)

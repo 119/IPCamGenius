@@ -20,5 +20,6 @@ bool parseValue(CString &content, CString variable, CString &value);
 void startProgressDlg(CString caption, unsigned short s);
 void CStringSpecialChars(CString &str);
 bool parseWIFIEntries(CString xbuf, std::vector<WIFI_Entry> &vec);
+CString CStringTruncate(CString ori, int len);
 
 #endif

@@ -457,21 +457,7 @@ parseURL(const char * url,
 		if(p2 && scope && scope < p2 && scope_id) {
 			/* parse scope */
 #ifdef IF_NAMESIZE
-			char tmp[IF_NAMESIZE];
-			int l;
-			scope++;
-			/* "%25" is just '%' in URL encoding */
-			if(scope[0] == '2' && scope[1] == '5')
-				scope += 2;	/* skip "25" */
-			l = p2 - scope;
-			if(l >= IF_NAMESIZE)
-				l = IF_NAMESIZE - 1;
-			memcpy(tmp, scope, l);
-			tmp[l] = '\0';
-			*scope_id = if_nametoindex(tmp);
-			if(*scope_id == 0) {
-				*scope_id = (unsigned int)strtoul(tmp, NULL, 10);
-			}
+
 #endif
 		}
 		p3 = strchr(p1, '/');

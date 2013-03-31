@@ -24,8 +24,9 @@ private:
 	static const unsigned short offset_port_http = 0x56;
 	static const unsigned short offset_name = 0x24;
 	static const unsigned short offset_ip = 0x39;
-	static const unsigned short offset_mask = 0x3C;
+	static const unsigned short offset_mask = 0x3D;
 	static const unsigned short offset_gateway = 0x41;
+	static const unsigned short offset_mac = 0x17;
 
 	bool sendPacket_1();
 	bool isType_0() const;

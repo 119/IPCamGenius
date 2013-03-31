@@ -14,10 +14,10 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="头文件\miniupnpc">
-      <UniqueIdentifier>{fc95cb08-b7c1-48bd-bbcb-2dbb93628134}</UniqueIdentifier>
+      <UniqueIdentifier>{660048b2-108e-4423-9628-de1f982afdf8}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\miniupnpc">
-      <UniqueIdentifier>{b078994f-f0ac-475d-8d40-ec989097471d}</UniqueIdentifier>
+      <UniqueIdentifier>{720f581b-2e1a-4b29-bcc1-3d5cdff3647a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,57 +47,6 @@
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\bsdqueue.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\codelength.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\connecthostport.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\declspec.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\igd_desc_parse.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\minisoap.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\minissdpc.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\miniupnpc.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\miniupnpcstrings.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\miniupnpctypes.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\miniwget.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\minixml.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\portlistingparse.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\upnpcommands.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\upnperrors.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\upnpreplyparse.h">
-      <Filter>头文件\miniupnpc</Filter>
-    </ClInclude>
-    <ClInclude Include="upnp\receivedata.h">
-      <Filter>头文件\miniupnpc</Filter>
     </ClInclude>
     <ClInclude Include="supplementary.h">
       <Filter>头文件</Filter>
@@ -147,6 +96,60 @@
     <ClInclude Include="CameraAdapterF.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkSettingDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\bsdqueue.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\codelength.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\connecthostport.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\declspec.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\igd_desc_parse.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\minisoap.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\minissdpc.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\miniupnpc.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\miniupnpcstrings.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\miniupnpctypes.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\miniwget.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\minixml.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\portlistingparse.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\receivedata.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\upnpcommands.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\upnperrors.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="upnp\upnpreplyparse.h">
+      <Filter>头文件\miniupnpc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IPCamGenius.cpp">
@@ -157,42 +160,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\connecthostport.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\igd_desc_parse.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\minisoap.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\miniupnpc.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\miniwget.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\minixml.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\portlistingparse.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\upnpc.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\upnpcommands.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\upnperrors.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\upnpreplyparse.cpp">
-      <Filter>源文件\miniupnpc</Filter>
-    </ClCompile>
-    <ClCompile Include="upnp\receivedata.cpp">
-      <Filter>源文件\miniupnpc</Filter>
     </ClCompile>
     <ClCompile Include="supplementary.cpp">
       <Filter>源文件</Filter>
@@ -238,6 +205,42 @@
     </ClCompile>
     <ClCompile Include="CameraAdapterF.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSettingDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\connecthostport.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\igd_desc_parse.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\minisoap.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\miniupnpc.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\miniwget.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\minixml.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\portlistingparse.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\receivedata.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\upnpcommands.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\upnperrors.cpp">
+      <Filter>源文件\miniupnpc</Filter>
+    </ClCompile>
+    <ClCompile Include="upnp\upnpreplyparse.cpp">
+      <Filter>源文件\miniupnpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
