@@ -8,6 +8,7 @@ Gateway::Gateway()
 {
 	is_ready = false;
 	is_error = false;
+	is_gatewayReady = false;
 }
 
 Gateway::~Gateway()
@@ -41,9 +42,15 @@ bool Gateway::isError() const
 {
 	return is_error;
 }
+
 bool Gateway::isReady() const
 {
 	return is_ready;
+}
+
+bool Gateway::isGatewayReady() const
+{
+	return is_gatewayReady;
 }
 
 CString Gateway::getExternalIPAddress() const
@@ -54,6 +61,16 @@ CString Gateway::getExternalIPAddress() const
 CString Gateway::getGatewayAddress() const
 {
 	return CString(gateway);
+}
+
+CString Gateway::getSubnetMask() const
+{
+	return CString(mask);
+}
+
+CString Gateway::getSubnetAddress()
+{
+	return calculateSubnetAddress(gateway, mask);
 }
 
 bool Gateway::_getGatewayInfo()
@@ -210,5 +227,6 @@ bool Gateway::_getRouterInfo()
 	if (!getGatewayInfo(c_gateway, c_mask)) return false;
 	strcpy(gateway, c_gateway);
 	strcpy(mask, c_mask);
+	is_gatewayReady = true;
 	return true;
 }

@@ -6,12 +6,13 @@
 class CameraAdapterH: public CameraAdapter
 {
 public:
+	char getFlag();
 	bool sendPacket(int n);
 	bool recvPacket();
 	int getPacketType() const;
-	IPCameraInfo parsePacket() const;
+	IPCameraInfo parsePacket();
 	bool get_params_ssid(const IPCameraInfo &info, CString &ssid);
-	bool set_network(const IPCameraInfo &info);
+	bool set_network(const IPCameraInfo &info, const IPCameraInfo &ori);
 	bool wifi_scan(const IPCameraInfo &info);
 	bool get_wifi_scan_result(const IPCameraInfo &info, std::vector<WIFI_Entry> &vec);
 	bool set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry, CString wifi_pwd);
@@ -26,6 +27,9 @@ private:
 	static const unsigned short offset_port_http = 92;
 	static const unsigned short offset_port_rtsp = 98;
 	static const unsigned short offset_name = 116;
+	static const unsigned short offset_dns1 = 0x3C;
+	static const unsigned short offset_dns2 = 0x4C;
+	static const unsigned short offset_mac = 0x64;
 
 	bool sendPacket_1();
 	bool isType_0() const;

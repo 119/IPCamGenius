@@ -169,3 +169,18 @@ void fillOffsetByIP(unsigned char *data, int offset, const char *ip)
 	data[offset+2] = (unsigned char)c;
 	data[offset+3] = (unsigned char)d;
 }
+
+CString calculateSubnetAddress(CString gateway, CString mask)
+{
+	char subnet[16];
+	unsigned short ga, gb, gc, gd;
+	unsigned short ma, mb, mc, md;
+	unsigned short sa, sb, sc, sd;
+
+	sscanf(gateway, "%u.%u.%u.%u", &ga, &gb, &gc, &gd);
+	sscanf(mask, "%u.%u.%u.%u", &ma, &mb, &mc, &md);
+	sa = ga & ma; sb = gb & mb; sc = gc & mc; sd = gd & md;
+	sprintf(subnet, "%u.%u.%u.%u", sa, sb, sc, sd);
+
+	return subnet;
+}

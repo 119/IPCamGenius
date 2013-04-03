@@ -7,6 +7,11 @@ CameraAdapterF::CameraAdapterF()
 	isGatewayInfoValid = getGatewayInfo(c_gateway, c_netmask);
 }
 
+char CameraAdapterF::getFlag()
+{
+	return 'F';
+}
+
 bool CameraAdapterF::sendPacket(int n)
 {
 	bool ret = false;
@@ -58,7 +63,7 @@ bool CameraAdapterF::isType_0() const
 	return true;
 }
 
-IPCameraInfo CameraAdapterF::parsePacket() const
+IPCameraInfo CameraAdapterF::parsePacket()
 {
 	IPCameraInfo caminfo;
 
@@ -66,7 +71,6 @@ IPCameraInfo CameraAdapterF::parsePacket() const
 	strcpy(caminfo.ip, getIPByOffset(last_recv_packet, offset_ip));
 	strcpy(caminfo.mask, getIPByOffset(last_recv_packet, offset_mask));
 	strcpy(caminfo.gateway, getIPByOffset(last_recv_packet, offset_gateway));
-	strcpy(caminfo.ip, last_sender_ip);
 	memcpy(&(caminfo.port_http), (char *)last_recv_packet + offset_port_http, 2);
 	strcpy(caminfo.cameraName, (char *)last_recv_packet + offset_name);
 	strcpy(caminfo.mac, (char *)last_recv_packet + offset_mac);
@@ -103,23 +107,28 @@ bool CameraAdapterF::get_params_ssid(const IPCameraInfo &info, CString &ssid)
 	return true;
 }
 
-bool CameraAdapterF::set_network(const IPCameraInfo &info)
+bool CameraAdapterF::set_network(const IPCameraInfo &info, const IPCameraInfo &ori)
 {
+	char buf[100];
 	CString user, pwd;
-	static unsigned char _packet_set[0x53] = {
+	static unsigned char _packet_set[0x54] = {
 		0x4d, 0x4f, 0x5f, 0x49, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3d
 	};
-	memset(_packet_set + 0x10, 0, 0x43);
+	memset(_packet_set + 0x10, 0, 0x44);
 	strcpy((char *)_packet_set + 0x1B, info.mac);
-	user = CStringTruncate("admin", 13);
-	//if (!getAuth(user, pwd)) return false;
-	memcpy((char *)_packet_set + 0x28, CStringTruncate(user, 13), 13);
-	memcpy((char *)_packet_set + 0x35, CStringTruncate(pwd, 13), 13);
+	if (!getAuth(user, pwd)) return false;
+	user = CStringTruncate(user, 13);
+	pwd = CStringTruncate(pwd, 13);
+	memset(buf, 0, sizeof(buf)); memcpy(buf, user, user.GetLength());
+	memcpy((char *)_packet_set + 0x28, buf, 13);
+	memset(buf, 0, sizeof(buf)); memcpy(buf, pwd, pwd.GetLength());
+	memcpy((char *)_packet_set + 0x35, buf, 13);
 	fillOffsetByIP(_packet_set, 0x42, info.ip);
 	fillOffsetByIP(_packet_set, 0x46, info.mask);
 	fillOffsetByIP(_packet_set, 0x4A, info.gateway);
-	_packet_set[0x51] = (unsigned char)((info.port_http >> 8) & 255);
-	_packet_set[0x52] = (unsigned char)(info.port_http & 255);
+	fillOffsetByIP(_packet_set, 0x4E, "8.8.8.8");
+	_packet_set[0x52] = (unsigned char)((info.port_http >> 8) & 255);
+	_packet_set[0x53] = (unsigned char)(info.port_http & 255);
 
 	return broadcast_packet(port_destination, (char *)_packet_set, sizeof(_packet_set), port_source);
 }
@@ -128,7 +137,8 @@ bool CameraAdapterF::ipcam_reboot(const IPCameraInfo &info, CString user, CStrin
 {
 	int rb = AfxMessageBox(_T("设置成功，重启摄像机后生效，是否现在重启？"), MB_OKCANCEL);
 	if (rb == IDCANCEL) return false;
-	CString request = "GET /reboot.cgi?user=" + user + "&pwd=" + pwd + " HTTP/1.1\r\n\r\n";
+	CString base64 = getAuth_Base64(user, pwd);
+	CString request = "GET /reboot.cgi HTTP/1.1\r\nAuthorization: Basic " + base64 + "\r\n\r\n";
 	httpRequest(info.ip, info.port_http, request);
 	startProgressDlg(_T("摄像机正在重启中，请等待30秒钟"), 30);
 
@@ -180,14 +190,15 @@ bool CameraAdapterF::get_wifi_scan_result(const IPCameraInfo &info, std::vector<
 bool CameraAdapterF::set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry, CString wifi_pwd)
 {
 	int ret_code;
-	char req_common[1024], req_user[1024];
-	CString request, user = "admin", pwd = "";
+	char req_common[1024];
+	CString auth_base64;
+	CString request, user = "adminx", pwd = "";
 	CString wpa_psk, key1, keyformat, buf;
 	CString nssid, ssid = CString(entry.ssid);
 
+	auth_base64 = getAuth_Base64(user, pwd);
 	CStringSpecialChars(wifi_pwd);
 	CStringSpecialChars(ssid);
-	sprintf(req_user, "loginuse=%s&loginpas=%s", user, pwd);
 
 	if (entry.security == 0) {
 		wpa_psk = "";
@@ -205,16 +216,18 @@ bool CameraAdapterF::set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry,
 		keyformat = "0";
 	}
 	sprintf(req_common, "keyformat=%s&key1=%s&key2=&key3=&key4=&key1_bits=0&key2_bits=0&key3_bits=0&key4_bits=0&enable=1&channel=5&authtype=0&defkey=0&ssid=%s&mode=%d&encrypt=%d&wpa_psk=%s", keyformat, key1, ssid, entry.mode, entry.security, wpa_psk);
-	request = "GET /cgi-bin/set_wifi.cgi?loginuse=" + user + 
-			"&loginpas=" + pwd + "&" + req_common + " HTTP/1.1 \r\n\r\n";
+	request = "GET /set_wifi.cgi?user=" + user + 
+			"&pwd=" + pwd + "&" + req_common + " HTTP/1.1 \r\nAuthorization: Basic " + auth_base64 + "\r\n\r\n";
 	
 	if ((ret_code = httpRequest(info.ip, info.port_http, request, &buf)) < 0) return false;
-	while (strstr(buf.GetBuffer(0), "user or passwd is error") != NULL) {
+	while (strstr(buf.GetBuffer(0), "user or passwd is error")
+			|| strstr(buf.GetBuffer(0), "Unauth") || strstr(buf.GetBuffer(0), "401")) {
 		if (!getAuth(user, pwd)) return false;
+		auth_base64 = getAuth_Base64(user, pwd);
 		CStringSpecialChars(user);
 		CStringSpecialChars(pwd);
-		request = "GET /cgi-bin/set_wifi.cgi?loginuse=" + user + 
-			"&loginpas=" + pwd + "&" + req_common + " HTTP/1.1 \r\n\r\n";
+		request = "GET /set_wifi.cgi?user=" + user + 
+			"&pwd=" + pwd + "&" + req_common + " HTTP/1.1 \r\nAuthorization: Basic " + auth_base64 + "\r\n\r\n";
 		httpRequest(info.ip, info.port_http, request, &buf);
 	}
 	if (!strstr(buf.GetBuffer(0), "ok")) return false;

@@ -7,12 +7,13 @@ class CameraAdapterF: public CameraAdapter
 {
 public:
 	CameraAdapterF();
+	char getFlag();
 	bool sendPacket(int n);
 	bool recvPacket();
 	int getPacketType() const;
-	IPCameraInfo parsePacket() const;
+	IPCameraInfo parsePacket();
 	bool get_params_ssid(const IPCameraInfo &info, CString &ssid);
-	bool set_network(const IPCameraInfo &info);
+	bool set_network(const IPCameraInfo &info, const IPCameraInfo &ori);
 	bool wifi_scan(const IPCameraInfo &info);
 	bool get_wifi_scan_result(const IPCameraInfo &info, std::vector<WIFI_Entry> &vec);
 	bool set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry, CString wifi_pwd);

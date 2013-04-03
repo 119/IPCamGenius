@@ -63,6 +63,14 @@ bool getAuth_Base64(CString &base64)
 	return true;
 }
 
+CString getAuth_Base64(CString user, CString pwd)
+{
+	char auth_base64[128];
+
+	Base64Encode(auth_base64, user + ":" + pwd);
+	return auth_base64;
+}
+
 bool parseValue(CString &content, CString variable, CString &value)
 {
 	int i, j, offset;
@@ -73,9 +81,9 @@ bool parseValue(CString &content, CString variable, CString &value)
 	sscanf(content.GetBuffer(0) + offset, "%[^=]%c%s", tmp, &tmp[0], buf);
 
 	value = CString(buf);
-	for (i = 0; buf[i] && buf[i] != '"'; i++);
-	if (buf[i] == '"') {
-		for (j = i + 1; buf[j] && buf[j] != '"'; j++);
+	for (i = 0; buf[i] && buf[i] != '"' && buf[i] != '\''; i++);
+	if (buf[i] == '"' || buf[i] == '\'') {
+		for (j = i + 1; buf[j] && buf[j] != '"' && buf[j] != '\''; j++);
 		if (!buf[j]) return false;
 		buf[j] = 0;
 		value = CString(buf + i + 1);
@@ -188,7 +196,7 @@ CString CStringTruncate(CString ori, int len)
 	int i;
 	char buf[1024];
 	const char *p = ori;
-	memcpy(buf, 0, len + 1);
+	memset(buf, 0, 1024);
 
 	for (i = 0; i < len && i < ori.GetLength(); i++)
 		*(buf + i) = *(p + i);

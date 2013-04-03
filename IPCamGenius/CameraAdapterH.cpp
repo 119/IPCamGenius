@@ -14,6 +14,11 @@ bool CameraAdapterH::sendPacket(int n)
 	return ret;
 }
 
+char CameraAdapterH::getFlag()
+{
+	return 'H';
+}
+
 bool CameraAdapterH::sendPacket_1()
 {
 	static unsigned char packet_1[8] = { 0x10, 0x10, 0x01, 0x0f, 0x00, 0x00, 0x00, 0x00 };
@@ -46,7 +51,7 @@ bool CameraAdapterH::isType_0() const
 	return true;
 }
 
-IPCameraInfo CameraAdapterH::parsePacket() const
+IPCameraInfo CameraAdapterH::parsePacket()
 {
 	IPCameraInfo caminfo;
 
@@ -56,6 +61,10 @@ IPCameraInfo CameraAdapterH::parsePacket() const
 	memcpy(&(caminfo.port_http), (char *)last_recv_packet + offset_port_http, 2);
 	memcpy(&(caminfo.port_rtsp), (char *)last_recv_packet + offset_port_rtsp, 2);
 	strcpy(caminfo.cameraName, (char *)last_recv_packet + offset_name);
+
+	strcpy(caminfo.dns1, (char *)last_recv_packet + offset_dns1);
+	strcpy(caminfo.dns2, (char *)last_recv_packet + offset_dns2);
+	memcpy(caminfo.mac, (char *)last_recv_packet + offset_mac, 6);
 
 	return caminfo;
 }
@@ -89,7 +98,7 @@ bool CameraAdapterH::get_params_ssid(const IPCameraInfo &info, CString &ssid)
 	return true;
 }
 
-bool CameraAdapterH::set_network(const IPCameraInfo &info)
+/*bool CameraAdapterH::set_network(const IPCameraInfo &info)
 {
 	CString buf;
 	CString request_head = "GET /set_network.cgi?ip=" + CString(info.ip) + 
@@ -110,13 +119,59 @@ bool CameraAdapterH::set_network(const IPCameraInfo &info)
 	ipcam_reboot(info, loginuser, loginpwd);
 
 	return true;
+}*/
+
+bool CameraAdapterH::set_network(const IPCameraInfo &info, const IPCameraInfo &ori)
+{
+	const int offset_base = 0x80;
+	const int offset_name = 0xf0;
+	const int offset_port_http = 0xd8;
+	const int offset_port_rtsp = 0xde;
+	const int offset_ip = 0x88;
+	const int offset_mask = 0x98;
+	const int offset_gateway = 0xa8;
+	const int offset_dns1 = 0xb8;
+	const int offset_dns2 = 0xc8;
+	const int offset_mac = 0xe0;
+	const int offset_get_ip_type = 0xff;
+	static unsigned char _packet_set[0x108] = {
+		0x10, 0x10, 0x02, 0x0f, 0x00, 0x00, 0x00, 0x01
+	};
+	memset(_packet_set + 0x10, 0, 0xF8);
+	strcpy((char *)_packet_set + offset_ip - offset_base, ori.ip);
+	strcpy((char *)_packet_set + offset_gateway - offset_base, ori.gateway);
+	strcpy((char *)_packet_set + offset_mask - offset_base, ori.mask);
+	strcpy((char *)_packet_set + offset_dns1 - offset_base, ori.dns1);
+	strcpy((char *)_packet_set + offset_dns2 - offset_base, ori.dns2);
+	memcpy(_packet_set + offset_mac - offset_base, ori.mac, 6);
+	for (int i = 0; i < 3; i++)
+		memcpy(_packet_set + offset_port_http - offset_base + i * 2, &ori.port_http, sizeof(ori.port_http));
+	memcpy(_packet_set + offset_port_rtsp - offset_base, &ori.port_rtsp, sizeof(ori.port_rtsp));
+	strcpy((char *)_packet_set + offset_name - offset_base, ori.cameraName);
+
+	strcpy((char *)_packet_set + offset_ip , info.ip);
+	strcpy((char *)_packet_set + offset_gateway , info.gateway);
+	strcpy((char *)_packet_set + offset_mask , info.mask);
+	strcpy((char *)_packet_set + offset_dns1 , info.dns1);
+	strcpy((char *)_packet_set + offset_dns2 , info.dns2);
+	memcpy(_packet_set + offset_mac , info.mac, 6);
+	for (int i = 0; i < 3; i++)
+		memcpy(_packet_set + offset_port_http  + i * 2, &info.port_http, sizeof(info.port_http));
+	memcpy(_packet_set + offset_port_rtsp , &info.port_rtsp, sizeof(info.port_rtsp));
+	strcpy((char *)_packet_set + offset_name , info.cameraName);
+
+	return broadcast_packet(port_destination, (char *)_packet_set, sizeof(_packet_set), port_source);
 }
 
 bool CameraAdapterH::ipcam_reboot(const IPCameraInfo &info, CString user, CString pwd)
 {
 	int rb = AfxMessageBox(_T("设置成功，重启摄像机后生效，是否现在重启？"), MB_OKCANCEL);
 	if (rb == IDCANCEL) return false;
-	CString request = "GET /cgi-bin/reboot.cgi?loginuse=" + user + "&loginpas=" + pwd + " HTTP/1.1\r\n\r\n";
+	CString request_header = "GET /cgi-bin/reboot.cgi";
+	CString request = request_header + "?loginuse=" + user + "&loginpas=" + pwd + " HTTP/1.1\r\n\r\n";
+	httpRequest(info.ip, info.port_http, request);
+	request_header = "GET /reboot.cgi";
+	request = request_header + "?loginuse=" + user + "&loginpas=" + pwd + " HTTP/1.1\r\n\r\n";
 	httpRequest(info.ip, info.port_http, request);
 	startProgressDlg(_T("摄像机正在重启中，请等待30秒钟"), 30);
 
@@ -127,7 +182,11 @@ bool CameraAdapterH::wifi_scan(const IPCameraInfo &info)
 {
 	CString request = "GET /cgi-bin/wifi_scan.cgi HTTP/1.1\r\n\r\n";
 	int ret_code = httpRequest(info.ip, info.port_http, request);
-	if (ret_code != 200) return false;
+	if (ret_code != 200) {
+		request = "GET /wifi_scan.cgi HTTP/1.1\r\n\r\n";
+		ret_code = httpRequest(info.ip, info.port_http, request);
+		if (ret_code != 200) return false;
+	}
 	startProgressDlg(_T("WIFI扫描中，请等待5秒种"), 5);
 	return true;
 }
@@ -143,14 +202,14 @@ bool CameraAdapterH::get_wifi_scan_result(const IPCameraInfo &info, std::vector<
 bool CameraAdapterH::set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry, CString wifi_pwd)
 {
 	int ret_code;
-	char req_common[1024], req_user[1024];
+	char req_common[1024];
 	CString request, user = "admin", pwd = "";
 	CString wpa_psk, key1, keyformat, buf;
 	CString nssid, ssid = CString(entry.ssid);
+	CString request_header = "GET /cgi-bin/set_wifi.cgi";
 
 	CStringSpecialChars(wifi_pwd);
 	CStringSpecialChars(ssid);
-	sprintf(req_user, "loginuse=%s&loginpas=%s", user, pwd);
 
 	if (entry.security == 0) {
 		wpa_psk = "";
@@ -168,10 +227,16 @@ bool CameraAdapterH::set_wifi(const IPCameraInfo &info, const WIFI_Entry &entry,
 		keyformat = "0";
 	}
 	sprintf(req_common, "keyformat=%s&key1=%s&key2=&key3=&key4=&key1_bits=0&key2_bits=0&key3_bits=0&key4_bits=0&enable=1&channel=5&authtype=0&defkey=0&ssid=%s&mode=%d&encrypt=%d&wpa_psk=%s", keyformat, key1, ssid, entry.mode, entry.security, wpa_psk);
-	request = "GET /cgi-bin/set_wifi.cgi?loginuse=" + user + 
+	request = request_header + "?loginuse=" + user + 
 			"&loginpas=" + pwd + "&" + req_common + " HTTP/1.1 \r\n\r\n";
 	
 	if ((ret_code = httpRequest(info.ip, info.port_http, request, &buf)) < 0) return false;
+	if (ret_code == 404) {
+		request_header = "GET /set_wifi.cgi";
+		request = request_header + "?loginuse=" + user + 
+			"&loginpas=" + pwd + "&" + req_common + " HTTP/1.1 \r\n\r\n";
+		if ((ret_code = httpRequest(info.ip, info.port_http, request, &buf)) < 0) return false;
+	}
 	while (strstr(buf.GetBuffer(0), "user or passwd is error") != NULL) {
 		if (!getAuth(user, pwd)) return false;
 		CStringSpecialChars(user);

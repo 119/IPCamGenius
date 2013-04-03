@@ -17,6 +17,9 @@ struct IPCameraInfo
 	char externalIPAddress[64];
 	int adapter_idx;
 	char mac[16];
+	char dns1[16];
+	char dns2[16];
+	char set_ip_type;
 };
 
 struct WIFI_Entry
@@ -37,5 +40,6 @@ unsigned long ip_s2ul(const char *ip);
 bool getGatewayInfo(CString &gateway, CString &mask);
 CString getIPByOffset(const unsigned char *data, int offset);
 void fillOffsetByIP(unsigned char *data, int offset, const char *ip);
+CString calculateSubnetAddress(CString gateway, CString mask);
 
 #endif

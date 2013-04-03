@@ -19,4 +19,6 @@ public:
 	CEdit m_username;
 	CEdit m_password;
 	afx_msg void OnBnClickedGetUserPwdCancel();
+	afx_msg void OnEnChangeEditGetUserPwdUser();
+	afx_msg void OnEnChangeEditGetUserPwdPwd();
 };

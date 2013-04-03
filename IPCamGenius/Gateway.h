@@ -20,8 +20,11 @@ public:
 	bool init();
 	bool isError() const;
 	bool isReady() const;
+	bool isGatewayReady() const;
 	CString getExternalIPAddress() const;
 	CString getGatewayAddress() const;
+	CString getSubnetMask() const;
+	CString getSubnetAddress();
 	bool getUPnPMap(UPNPMap &ipmap, unsigned short &eport);
 	bool isTCPPortUsed(unsigned short eport);
 	bool getNextAvailableTCPPort(unsigned short iport, unsigned short &eport);
@@ -31,6 +34,7 @@ public:
 protected:
 	bool is_error;
 	bool is_ready;
+	bool is_gatewayReady;
 	struct UPNPUrls urls;
 	struct IGDdatas data;
 	CString externalIPAddress;

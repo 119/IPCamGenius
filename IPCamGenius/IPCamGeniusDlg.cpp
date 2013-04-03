@@ -245,7 +245,13 @@ void CIPCamGeniusDlg::OnBnClickedButtonOnekeyConfig()
 {
 	POSITION pos = m_list_cameras.GetFirstSelectedItemPosition();
 	int idx = m_list_cameras.GetNextSelectedItem(pos);
+	if (idx < 0) {
+		msgbox("请先选择摄像机");
+		return;
+	}
+
 	IPCameraInfo info = network_controller.vec_info[idx];
+	IPCameraInfo info_ori = info;
 	UPNPMap ipmap_http(info.ip, info.port_http), ipmap_rtsp(info.ip, info.port_rtsp);
 	unsigned short eport_http = 0, eport_rtsp = 0, iport_http = 0, iport_rtsp = 0;
 	Gateway *p_gateway = &network_controller.gateway;
@@ -256,6 +262,13 @@ void CIPCamGeniusDlg::OnBnClickedButtonOnekeyConfig()
 	}
 	if (!network_controller.gateway.isReady()) {
 		msgbox(_T("正在获取网关信息，请稍后再试！"));
+		return;
+	}
+
+	CString subnetMask = network_controller.gateway.getSubnetMask();
+	CString gatewayAddr = network_controller.gateway.getGatewayAddress();
+	if (calculateSubnetAddress(gatewayAddr, subnetMask) != calculateSubnetAddress(info.gateway, info.mask)) {
+		msgbox(_T("摄像机不处于当前子网，请先进行网络设置！"));
 		return;
 	}
 
@@ -308,7 +321,7 @@ void CIPCamGeniusDlg::OnBnClickedButtonOnekeyConfig()
 				p_gateway->addTCPPortMapping(info.ip, iport_http, eport_http);
 				if (info.port_rtsp) p_gateway->addTCPPortMapping(info.ip, iport_rtsp, eport_rtsp);
 				info.port_http = iport_http; info.port_rtsp = iport_rtsp;
-				network_controller.camera_adapters[index]->set_network(info);
+				network_controller.camera_adapters[index]->set_network(info, info_ori);
 				msgbox("端口映射完毕！");
 				reset_network();
 				return;
@@ -357,10 +370,12 @@ void CIPCamGeniusDlg::OnBnClickedButtonSetNetwork()
 	}
 
 	IPCameraInfo info = network_controller.vec_info[idx];
+	IPCameraInfo info_ori = info;
 
 	CNetworkSettingDlg dlg;
 	dlg.setIP(info.ip);
 	dlg.setPortHTTP(info.port_http);
+	dlg.setPortRTSP(info.port_rtsp);
 	dlg.setMask(info.mask);
 	dlg.setGateway(info.gateway);
 	if (dlg.DoModal() == IDOK) {
@@ -369,7 +384,7 @@ void CIPCamGeniusDlg::OnBnClickedButtonSetNetwork()
 		strcpy(info.mask, dlg.getMask());
 		info.port_http = dlg.getPortHTTP();
 		info.port_rtsp = dlg.getPortRTSP();
-		network_controller.camera_adapters[info.adapter_idx]->set_network(info);
+		network_controller.camera_adapters[info.adapter_idx]->set_network(info, info_ori);
 		reset_network();
 	}
 }

@@ -16,6 +16,7 @@ void InitConsoleWindow();
 CString ulong2CString(unsigned long n);
 bool getAuth(CString &user, CString &pwd);
 bool getAuth_Base64(CString &base64);
+CString getAuth_Base64(CString user, CString pwd);
 bool parseValue(CString &content, CString variable, CString &value);
 void startProgressDlg(CString caption, unsigned short s);
 void CStringSpecialChars(CString &str);
